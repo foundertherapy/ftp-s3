@@ -1,12 +1,10 @@
-FTP frontend for S3
-===================
-
-This package provides an FTP server based on pyftpdlib and boto. It maps FTP
-commands to S3 API calls. Authentication is done using the USER command with
-your access key as your username and your secret key as your password.
+Read Only FTP frontend for S3
+=============================
+This is a proxy service that allow downloading files from FTP protocol through AWS S3.
 
 Usage
 -----
+Copy `settings.py.template` to `settings.py` and change the configurations.
 
 Execute `run.py [port] [internal]`, where `port` is the port number you want the
 server to run on, and `internal` is the literal string you can use to disable
@@ -15,19 +13,13 @@ masquerading.
 `ftp_s3` is a module with `ftp_s3.main.run()` being the function that puts the
 entire thing together and runs the server.
 
-
 Notes
 -----
+* Listing is disabled (you can change that by `S3FileSystem` in `main.py`).
 
-* The server displays buckets as if they're top level directories and parses the
-  key names to figure out the directory structure. This means that if you have a 
-  lot of keys in your bucket, it might take a while, and it doesn't get quicker
-  as you navigate down the tree, either, since it reads all the keys each time.
-  This is caused by a limitation of the API which doesn't deal with directory 
-  structure itself.
+* You can only read a specific file, you must have the full path of it, otherwise it will reject the operation with `File not found`.
 
-  This is definitely something worth optimizing, possibly by caching the results,
-  or relying on the order of the returned keys (which appears alphabetical).
+* It assumes that connection is about reading a file, so it ignore directories and check if the file exist on S3 directly.
 
 * Permissions aren't properly mapped. PR would be appreciated to fix this!
 

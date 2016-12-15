@@ -30,11 +30,13 @@ class S3FileSystem(AbstractedFS):
 
         key_path = full_path[2 + len(bucket_name):]
         key = bucket.get_key(key_path)
-        
+        if not key:
+            raise FilesystemError("File is not Found")
+
         # The timeout for the url that is generated to allow direct downloads
         # of large files.
         # This is calculated based on dialup speeds + 60 secs for overhead
-        expires_in = key.size / 7 + 60 
+        expires_in = key.size / 7 + 60
 
         fd = urllib.urlopen(key.generate_url(expires_in))
 
@@ -46,7 +48,7 @@ class S3FileSystem(AbstractedFS):
 
     def chdir(self, path):
         assert isinstance(path, unicode), path
-            
+
         self._cwd = self.fs2ftp(path)
 
     def _gen_listing(self, key_path, result_set, depth=0):

@@ -1,8 +1,9 @@
 #!/usr/bin/env python
 
 import sys
-import urllib
+
 from ftp_s3 import main
+from ftp_s3 import settings
 
 port = 21
 
@@ -15,7 +16,7 @@ if len(sys.argv) >= 2:
         sys.exit(1)
 
 if 'internal' not in sys.argv:
-    external_ip = urllib.urlopen("http://ifconfig.me/ip").read().strip()
+    external_ip = settings.EXTERNAL_IP
 else:
     external_ip = None
 
