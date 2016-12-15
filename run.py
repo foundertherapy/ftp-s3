@@ -3,7 +3,6 @@
 import sys
 
 from ftp_s3 import main
-from ftp_s3 import settings
 
 port = 21
 
@@ -15,9 +14,12 @@ if len(sys.argv) >= 2:
         print "Invalid port number specified."
         sys.exit(1)
 
-if 'internal' not in sys.argv:
-    external_ip = settings.EXTERNAL_IP
-else:
+if 'internal' in sys.argv:
     external_ip = None
+else:
+    try:
+        external_ip = sys.argv[2]
+    except ValueError:
+        external_ip = None
 
 main.run(port, masquerade_address=external_ip)
