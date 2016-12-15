@@ -17,7 +17,14 @@ class S3DownloadOnlyFileSystem(S3FileSystem):
 
     def open(self, filename, mode):
         # block access to any file out side ALLOWED_PATH
-        if not filename.startswith(settings.ALLOWED_PATH):
+        allowed = False
+
+        for allowed_path in settings.ALLOWED_PATHS:
+            if filename.startswith(allowed_path):
+                allowed = True
+                break
+
+        if not allowed and len(settings.ALLOWED_PATHS) > 0:
             raise FilesystemError('File not found')
 
         return super(S3DownloadOnlyFileSystem, self).open(filename, mode)
